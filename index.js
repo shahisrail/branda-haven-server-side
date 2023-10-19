@@ -29,16 +29,51 @@ const client = new MongoClient(uri, {
   }
 });
 
+
+
 async function run() {
+
   try {
+
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
+
+    const Sliderdata = client.db("Brandhaven").collection("Sliderdata");
+    const brandcart = client.db("Brandhaven").collection('brandcart')
+
+    app.get("/brand", async (req, res) => {
+      const cursor = Sliderdata.find({});
+      const result = await cursor.toArray();
+      res.send(result)
+    });
+    app.get("/brand/:brandName", async (req, res) => {
+      const brandName = req.params.brandName;
+      const query = { brandName: brandName }
+      const sliderdata = await Sliderdata.findOne(query)
+      res.send(sliderdata)
+    })
+    app.post('/cart', async (req, res) => {
+      const carts = req.body
+      const result = await brandcart.insertOne(carts)
+      res.send(result)
+    })
+
+    app.get('/cart', async (req, res) => {
+      const cursor = brandcart.find({});
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+    
+
+    
+     
+  
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
     console.log("Pinged your deployment. You successfully connected to MongoDB!");
   } finally {
     // Ensures that the client will close when you finish/error
-    await client.close();
+    // await client.close();
   }
 }
 run().catch(console.dir);
@@ -48,6 +83,8 @@ run().catch(console.dir);
 app.get('/', (req, res) => {
   res.send('e-commers server is running ')
 })
+
+
 
 app.listen(port, () => {
   console.log(`e-commerce server is running on port:${port}`);
