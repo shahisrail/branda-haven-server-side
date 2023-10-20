@@ -1,7 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 require("dotenv").config();
-const { MongoClient, ServerApiVersion } = require('mongodb');
+const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 const app = express()
 const port = process.env.PORT || 5000
 
@@ -40,6 +40,7 @@ async function run() {
 
     const Sliderdata = client.db("Brandhaven").collection("Sliderdata");
     const brandcart = client.db("Brandhaven").collection('brandcart')
+    const addCart = client.db("Brandhaven").collection('addCart')
 
     app.get("/brand", async (req, res) => {
       const cursor = Sliderdata.find({});
@@ -59,12 +60,29 @@ async function run() {
     })
 
     app.get('/cart', async (req, res) => {
-      const cursor = brandcart.find({});
+      const cursor = brandcart.find();
       const result = await cursor.toArray();
       res.send(result)
     })
     
-
+    app.get('/cart/:id', async (req, res) => {
+      const id = req.params.id
+      const query = { _id: new ObjectId(id) }
+      const result = await brandcart.findOne(query)
+      res.send(result)
+    })
+   
+    app.post('/addtocard', async (req, res) => {
+      const card = req.body
+      const result = await addCart.insertOne(card)
+      res.send(result)
+    })
+    app.get('/addtocard', async (req, res) => {
+      const cursor = addCart.find()
+      const result = await cursor.toArray()
+      res.send(result)
+    })
+    
     
      
   
