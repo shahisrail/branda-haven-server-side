@@ -10,13 +10,6 @@ const port = process.env.PORT || 5000
 app.use(cors())
 app.use(express.json())
 
-// Assaignment-10project
-// VV5j5K6px4TEIPOq
-// console.log(process.env.DB_USER)
-// console.log(process.env.DB_PASS)
-
-
-// const uri = "mongodb+srv://Assaignment-10project:VV5j5K6px4TEIPOq@cluster0.bkdyuro.mongodb.net/?retryWrites=true&w=majority";
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@cluster0.bkdyuro.mongodb.net/?retryWrites=true&w=majority`;
 
@@ -126,13 +119,9 @@ async function run() {
 }
 run().catch(console.dir);
 
-
-
 app.get('/', (req, res) => {
   res.send('e-commers server is running ')
 })
-
-
 
 app.listen(port, () => {
   console.log(`e-commerce server is running on port:${port}`);
